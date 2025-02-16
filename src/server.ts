@@ -13,55 +13,43 @@ import {
 import { env } from './env'
 import { errorHandler } from './error-handler'
 
-const app = fastify().withTypeProvider<ZodTypeProvider>()
+export const buildServer = () => {
+  const app = fastify().withTypeProvider<ZodTypeProvider>()
 
-// Configuração de validação e serialização com Zod
-app.setSerializerCompiler(serializerCompiler)
-app.setValidatorCompiler(validatorCompiler)
+  app.setSerializerCompiler(serializerCompiler)
+  app.setValidatorCompiler(validatorCompiler)
 
-// Registro de middlewares e plugins
-app.register(fastifyCors)
-app.register(fastifyJwt, { secret: env.JWT_SECRET })
-app.setErrorHandler(errorHandler)
+  app.register(fastifyCors)
+  app.register(fastifyJwt, { secret: env.JWT_SECRET })
+  app.setErrorHandler(errorHandler)
 
-// Rotas
-app.get('/health', async () => {
-  return { status: 'ok' }
-})
+  app.get('/health', async () => {
+    return { status: 'ok' }
+  })
 
-// Swagger e Swagger UI
-app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: 'Fastify SaaS Boilerplate',
-      description: 'Fastify SaaS Boilerplate API Documentation',
-      version: '1.0.0',
-    },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+  app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: 'LessQueue API',
+        description: 'API Documentation for LessQueue',
+        version: '1.0.0',
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
         },
       },
     },
-  },
-  transform: jsonSchemaTransform,
-})
-app.register(fastifySwaggerUi, {
-  routePrefix: '/docs',
-})
+    transform: jsonSchemaTransform,
+  })
 
-const start = async () => {
-  try {
-    await app.listen({ port: env.PORT, host: env.HOST })
-    console.log(`🚀 Server running at http://${env.HOST}:${env.PORT}`)
-    console.log(`📚 API Docs available at http://${env.HOST}:${env.PORT}/docs`)
-  } catch (err) {
-    app.log.error(err)
-    process.exit(1)
-  }
+  app.register(fastifySwaggerUi, {
+    routePrefix: '/docs',
+  })
+
+  return app
 }
-
-start()
