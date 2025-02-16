@@ -1,39 +1,65 @@
-// src/server.ts
-import cors from '@fastify/cors'
-import swagger from '@fastify/swagger'
-import swaggerUi from '@fastify/swagger-ui'
-import Fastify from 'fastify'
+import { fastifyCors } from '@fastify/cors'
+import { fastifyJwt } from '@fastify/jwt'
+import { fastifySwagger } from '@fastify/swagger'
+import { fastifySwaggerUi } from '@fastify/swagger-ui'
+import { fastify } from 'fastify'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod'
 
-const server = Fastify({ logger: true })
+import { env } from './env'
+import { errorHandler } from './error-handler'
 
-// Plugins
-server.register(cors)
-server.register(swagger, {
-  openapi: {
-    info: {
-      title: 'LessQueue API',
-      version: '1.0.0',
-      description: 'API para gerenciamento de pedidos e filas em restaurantes',
-    },
-  },
-})
-server.register(swaggerUi, {
-  routePrefix: '/docs',
-})
+const app = fastify().withTypeProvider<ZodTypeProvider>()
 
-// Health Check Route
-server.get('/health', async () => {
+// Configuração de validação e serialização com Zod
+app.setSerializerCompiler(serializerCompiler)
+app.setValidatorCompiler(validatorCompiler)
+
+// Registro de middlewares e plugins
+app.register(fastifyCors)
+app.register(fastifyJwt, { secret: env.JWT_SECRET })
+app.setErrorHandler(errorHandler)
+
+// Rotas
+app.get('/health', async () => {
   return { status: 'ok' }
 })
 
-// Start Server
+// Swagger e Swagger UI
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'Fastify SaaS Boilerplate',
+      description: 'Fastify SaaS Boilerplate API Documentation',
+      version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+  },
+  transform: jsonSchemaTransform,
+})
+app.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
+})
+
 const start = async () => {
   try {
-    await server.listen({ port: 3000, host: '0.0.0.0' })
-    console.log('🚀 Server running at http://localhost:3000')
-    console.log('📚 API Docs available at http://localhost:3000/docs')
+    await app.listen({ port: env.PORT, host: env.HOST })
+    console.log(`🚀 Server running at http://${env.HOST}:${env.PORT}`)
+    console.log(`📚 API Docs available at http://${env.HOST}:${env.PORT}/docs`)
   } catch (err) {
-    server.log.error(err)
+    app.log.error(err)
     process.exit(1)
   }
 }

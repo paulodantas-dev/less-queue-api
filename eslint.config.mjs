@@ -1,13 +1,14 @@
 /**
  * @type {import("eslint").Linter.Config[]}
  */
-const config = await Promise.all([
+const config = [
   {
     ignores: ['node_modules', 'dist'],
   },
   {
     files: ['**/*.ts'],
     languageOptions: {
+      parser: (await import('@typescript-eslint/parser')).default,
       ecmaVersion: 'latest',
       sourceType: 'module',
     },
@@ -21,9 +22,10 @@ const config = await Promise.all([
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/consistent-type-imports': 'error',
       'no-console': 'warn',
     },
   },
-])
+]
 
 export default config
