@@ -1,8 +1,6 @@
 import mongoose from 'mongoose'
 
-import { DeliveryTypeEnum } from '@/shared/enums/delivery-type.enum'
 import { OrderStatusEnum } from '@/shared/enums/order-status.enum'
-import { PaymentMethodEnum } from '@/shared/enums/payment-method.enum'
 
 export function createOrdersSchema() {
   return new mongoose.Schema(
@@ -12,9 +10,9 @@ export function createOrdersSchema() {
         ref: 'Users',
         required: true,
       },
-      placeId: {
+      companyId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Places',
+        ref: 'Companies',
         required: true,
       },
       items: [
@@ -24,7 +22,6 @@ export function createOrdersSchema() {
             ref: 'Items',
             required: true,
           },
-          name: { type: String, required: true },
           quantity: { type: Number, required: true },
           price: { type: Number, required: true },
         },
@@ -33,27 +30,10 @@ export function createOrdersSchema() {
         type: String,
         enum: Object.values(OrderStatusEnum),
         default: OrderStatusEnum.PENDING,
+        required: true,
       },
-      estimatedCompletionTime: { type: Date },
       totalPrice: { type: Number, required: true },
-      deliveryType: {
-        type: String,
-        enum: Object.values(DeliveryTypeEnum),
-        required: true,
-      },
-      deliveryAddress: {
-        street: { type: String },
-        city: { type: String },
-        state: { type: String },
-        zipCode: { type: String },
-        complement: { type: String },
-      },
-      paymentMethod: {
-        type: String,
-        enum: Object.values(PaymentMethodEnum),
-        required: true,
-      },
-      trackingUrl: { type: String },
+      estimatedCompletionTime: { type: Date, required: true },
     },
     { timestamps: true },
   )

@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import { DeliveryTypeEnum } from '@/shared/enums/delivery-type.enum'
 import { WeekDaysEnum } from '@/shared/enums/week-days.enum'
 
-export function createPlacesSchema() {
+export function createCompaniesSchema() {
   return new mongoose.Schema(
     {
       name: { type: String, required: true },
@@ -14,7 +14,7 @@ export function createPlacesSchema() {
         state: { type: String },
         zipCode: { type: String },
       },
-      phone: { type: String, required: true },
+      phone: { type: String },
       logoUrl: { type: String },
       workingHours: [
         {
@@ -26,9 +26,17 @@ export function createPlacesSchema() {
       deliveryMethods: [
         { type: String, enum: Object.values(DeliveryTypeEnum) },
       ],
+      ownerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users',
+        required: true,
+      },
     },
     { timestamps: true },
   )
 }
 
-export const PlacesModel = mongoose.model('Places', createPlacesSchema())
+export const CompaniesModel = mongoose.model(
+  'Companies',
+  createCompaniesSchema(),
+)

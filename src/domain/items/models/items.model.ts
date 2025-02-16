@@ -5,7 +5,7 @@ export function createItemsSchema() {
     {
       name: { type: String, required: true },
       description: { type: String },
-      preparationTime: { type: Number },
+      preparationTime: { type: Number, required: true },
       price: { type: Number, required: true },
       stock: { type: Number },
       category: { type: String },
@@ -16,12 +16,12 @@ export function createItemsSchema() {
         depth: { type: Number },
       },
       available: { type: Boolean, default: true },
-      placeId: {
+      imageUrls: [{ type: String }],
+      companyId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Places',
+        ref: 'Companies',
         required: true,
       },
-      imageUrls: [{ type: String }],
     },
     { timestamps: true },
   )
