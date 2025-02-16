@@ -1,18 +1,18 @@
-import { connectToDatabase } from './database/db'
-import { env } from './env'
-import { buildServer } from './server'
+import { connectToDatabase } from './infrastructure/database/db'
+import { buildServer } from './infrastructure/http/server'
+import { env } from './shared/config/env'
 
-const start = async () => {
+async function start() {
   const app = buildServer()
 
   try {
-    await connectToDatabase()
+    await connectToDatabase(app)
 
     await app.listen({ port: env.PORT, host: env.HOST })
-    console.log(`🚀 Server running at http://${env.HOST}:${env.PORT}`)
-    console.log(`📚 API Docs available at http://${env.HOST}:${env.PORT}/docs`)
+    app.log.info(`Server running at http://${env.HOST}:${env.PORT}`)
+    app.log.info(`API Docs available at http://${env.HOST}:${env.PORT}/docs`)
   } catch (err) {
-    app.log.error(err)
+    app.log.error('Server failed to start:', err)
     process.exit(1)
   }
 }

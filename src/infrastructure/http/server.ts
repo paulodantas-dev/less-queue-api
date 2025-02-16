@@ -10,23 +10,38 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 
-import { env } from './env'
-import { errorHandler } from './error-handler'
+import { testRoutes } from '@/interfaces/http/routes/test/test.routes'
+import { env } from '@/shared/config/env'
+import { errorHandler } from '@/shared/pre-handlers/error-handler'
 
-export const buildServer = () => {
-  const app = fastify().withTypeProvider<ZodTypeProvider>()
+export function buildServer() {
+  //start app
+  const app = fastify({
+    logger: {
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          messageFormat: '{msg}',
+          ignore: 'pid,hostname',
+        },
+      },
+    },
+  }).withTypeProvider<ZodTypeProvider>()
 
+  //zod validation
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
 
+  //pre-handlers
   app.register(fastifyCors)
   app.register(fastifyJwt, { secret: env.JWT_SECRET })
   app.setErrorHandler(errorHandler)
 
-  app.get('/health', async () => {
-    return { status: 'ok' }
-  })
+  //routes
+  app.register(testRoutes)
 
+  //swagger docs
   app.register(fastifySwagger, {
     openapi: {
       info: {
@@ -46,10 +61,10 @@ export const buildServer = () => {
     },
     transform: jsonSchemaTransform,
   })
-
   app.register(fastifySwaggerUi, {
     routePrefix: '/docs',
   })
 
+  //return app
   return app
 }
