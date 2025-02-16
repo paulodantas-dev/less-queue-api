@@ -10,7 +10,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 
-import { testRoutes } from '@/interfaces/http/routes/test/test.routes'
+import { registerUsersRoutes } from '@/interfaces/http/routes/auth/register-users.routes'
 import { env } from '@/shared/config/env'
 import { errorHandler } from '@/shared/pre-handlers/error-handler'
 
@@ -32,14 +32,6 @@ export function buildServer() {
   //zod validation
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
-
-  //pre-handlers
-  app.register(fastifyCors)
-  app.register(fastifyJwt, { secret: env.JWT_SECRET })
-  app.setErrorHandler(errorHandler)
-
-  //routes
-  app.register(testRoutes)
 
   //swagger docs
   app.register(fastifySwagger, {
@@ -64,6 +56,16 @@ export function buildServer() {
   app.register(fastifySwaggerUi, {
     routePrefix: '/docs',
   })
+
+  //pre-handlers
+  app.register(fastifyCors)
+  app.register(fastifyJwt, { secret: env.JWT_SECRET })
+
+  //error handler
+  app.setErrorHandler(errorHandler)
+
+  //auth routes
+  app.register(registerUsersRoutes, { prefix: '/api/auth' })
 
   //return app
   return app

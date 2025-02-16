@@ -1,40 +1,62 @@
 import type { FastifyInstance } from 'fastify'
 import { ZodError } from 'zod'
 
-import { BadRequestError } from './types/bad-request-error'
-import { UnauthorizedError } from './types/unauthorized-error'
+import { sendResponse } from '@/shared/utils/send-reponse'
+
+import { BaseError } from './types/base-error'
 
 type FastifyErrorHandler = FastifyInstance['errorHandler']
 
 export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
   const logger = request.log
 
+  if (error.validation) {
+    logger.error({ error }, 'Fastify validation error')
+
+    return sendResponse({
+      reply,
+      status: 400,
+      success: false,
+      message: error.validation
+        .map((v) => v.message)
+        .filter((msg): msg is string => msg !== undefined),
+      data: null,
+    })
+  }
+
   if (error instanceof ZodError) {
-    logger.error({ error }, 'Validation error')
+    logger.error({ error }, 'Zod validation error')
+    const zodMessages = Object.values(error.flatten().fieldErrors)
+      .flat()
+      .filter((msg): msg is string => msg !== undefined)
 
-    reply.status(400).send({
-      message: 'Validation error',
-      errors: error.flatten().fieldErrors,
+    return sendResponse({
+      reply,
+      status: 400,
+      success: false,
+      message: zodMessages,
+      data: null,
     })
   }
 
-  if (error instanceof BadRequestError) {
-    logger.error({ error }, 'Bad request error')
+  if (error instanceof BaseError) {
+    logger.error({ error }, `${error.statusCode} Error`)
 
-    reply.status(400).send({
-      message: error.message,
-    })
-  }
-
-  if (error instanceof UnauthorizedError) {
-    logger.error({ error }, 'Unauthorized error')
-
-    reply.status(401).send({
-      message: error.message,
+    return sendResponse({
+      reply,
+      status: error.statusCode,
+      success: false,
+      message: [error.message],
+      data: null,
     })
   }
 
   logger.error({ error }, 'Internal server error')
-
-  reply.status(500).send({ message: 'Internal server error' })
+  return sendResponse({
+    reply,
+    status: 500,
+    success: false,
+    message: ['Internal server error'],
+    data: null,
+  })
 }

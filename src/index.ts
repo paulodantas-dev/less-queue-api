@@ -12,7 +12,7 @@ async function start() {
     app.log.info(`Server running at http://${env.HOST}:${env.PORT}`)
     app.log.info(`API Docs available at http://${env.HOST}:${env.PORT}/docs`)
   } catch (err) {
-    app.log.error('Server failed to start:', err)
+    app.log.error('Server failed to start:', { err })
     process.exit(1)
   }
 }
