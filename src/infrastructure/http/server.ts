@@ -17,16 +17,19 @@ import { errorHandler } from '@/shared/pre-handlers/error-handler'
 export function buildServer() {
   //start app
   const app = fastify({
-    logger: {
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          messageFormat: '{msg}',
-          ignore: 'pid,hostname',
-        },
-      },
-    },
+    logger:
+      env.NODE_ENV === 'development'
+        ? {
+            transport: {
+              target: 'pino-pretty',
+              options: {
+                colorize: true,
+                messageFormat: '{msg}',
+                ignore: 'pid,hostname',
+              },
+            },
+          }
+        : {},
   }).withTypeProvider<ZodTypeProvider>()
 
   //zod validation
