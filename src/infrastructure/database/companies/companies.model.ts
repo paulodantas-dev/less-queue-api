@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
-import { DeliveryTypeEnum } from '@/shared/enums/delivery-type.enum'
-import { WeekDaysEnum } from '@/shared/enums/week-days.enum'
+import { DeliveryTypeEnum, WeekDaysEnum } from '@/shared/enums'
 
 export function createCompaniesSchema() {
   return new mongoose.Schema(

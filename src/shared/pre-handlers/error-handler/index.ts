@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { ZodError } from 'zod'
 
-import { sendResponse } from '@/shared/utils/send-reponse'
+import { sendResponse } from '@/shared/utils/send-response'
 
 import { BaseError } from './types/base-error'
 

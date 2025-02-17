@@ -20,11 +20,12 @@
     "eslint": "^9.20.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "prettier": "^3.5.1",
-    "tsup": "^8.3.6",
-    "tsx": "^4.19.2",
+    "tsup": "^2.0.3",
+    "tsx": "^3.12.10",
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^10.0.2",
     "@fastify/jwt": "^9.0.4",
     "@fastify/swagger": "^9.4.2",

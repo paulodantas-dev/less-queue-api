@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
-import { LoginTypeEnum } from '@/shared/enums/login-type.enum'
-import { UserRoleEnum } from '@/shared/enums/user-role.enum'
+import { LoginTypeEnum, UserRoleEnum } from '@/shared/enums'
 
 export function createUsersSchema() {
   return new mongoose.Schema(

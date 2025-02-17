@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
-import { handler } from '@/interfaces/http/controllers/auth/register.controller'
+import { handler } from '@/presentation/controllers/auth/register.controller'
 
 export const registerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -15,7 +15,7 @@ export const successSchema = z.object({
   message: z.array(z.string()),
   data: z
     .object({
-      token: z.string(),
+      accessToken: z.string(),
     })
     .nullable(),
 })

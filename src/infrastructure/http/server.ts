@@ -1,3 +1,4 @@
+import { fastifyCookie } from '@fastify/cookie'
 import { fastifyCors } from '@fastify/cors'
 import { fastifyJwt } from '@fastify/jwt'
 import { fastifySwagger } from '@fastify/swagger'
@@ -10,7 +11,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 
-import { registerUsersRoutes } from '@/interfaces/http/routes/auth/register-users.routes'
+import { registerUsersRoutes } from '@/presentation/routes/auth/register-users.route'
 import { env } from '@/shared/config/env'
 import { errorHandler } from '@/shared/pre-handlers/error-handler'
 
@@ -63,6 +64,9 @@ export function buildServer() {
   //pre-handlers
   app.register(fastifyCors)
   app.register(fastifyJwt, { secret: env.JWT_SECRET })
+  app.register(fastifyCookie, {
+    secret: env.COOKIE_SECRET,
+  })
 
   //error handler
   app.setErrorHandler(errorHandler)

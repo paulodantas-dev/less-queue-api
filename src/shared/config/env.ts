@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { z } from 'zod'
 
-import { NodeEnvEnum } from '../enums/node-env.enum'
+import { NodeEnvEnum } from '../enums'
 
 dotenv.config()
 
@@ -26,6 +26,7 @@ const envSchema = z.object({
       },
     ),
   JWT_SECRET: z.string().nonempty('JWT_SECRET is required'),
+  COOKIE_SECRET: z.string().nonempty('COOKIE_SECRET is required'),
   MONGO_URI: z.string().url('MONGO_URI must be a valid URL'),
   NODE_ENV: z.nativeEnum(NodeEnvEnum).default(NodeEnvEnum.Development),
 })

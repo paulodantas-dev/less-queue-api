@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { OrderStatusEnum } from '@/shared/enums/order-status.enum'
+import { OrderStatusEnum } from '@/shared/enums'
 
 export function createOrdersSchema() {
   return new mongoose.Schema(

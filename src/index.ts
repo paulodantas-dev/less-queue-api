@@ -7,7 +7,7 @@ async function start() {
 
   try {
     await connectToDatabase(app)
-
+    app.log.info('Connected to database')
     await app.listen({ port: env.PORT, host: env.HOST })
     app.log.info(`Server running at http://${env.HOST}:${env.PORT}`)
     app.log.info(`API Docs available at http://${env.HOST}:${env.PORT}/docs`)
