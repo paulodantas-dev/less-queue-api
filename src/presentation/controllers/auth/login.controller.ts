@@ -1,23 +1,22 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 
 import { UserRepositoryDatabase } from '@/infrastructure/database/users/user-repository'
-import { RegisterUserUseCase } from '@/presentation/use-cases/auth/register.use-case'
+import { loginSchema } from '@/presentation/routes/auth/login.route'
+import { LoginUserUseCase } from '@/presentation/use-cases/auth/login.use-case'
 import { generalErrorResponse } from '@/shared/utils/general-error-response'
 import { sendResponse } from '@/shared/utils/send-response'
 
-import { registerSchema } from '../../routes/auth/register-users.route'
-
-export async function registerhandler(
+export async function loginHandler(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
   try {
-    const { name, email, password } = registerSchema.parse(request.body)
+    const { email, password } = loginSchema.parse(request.body)
 
     const userRepository = new UserRepositoryDatabase()
-    const registerUserUseCase = new RegisterUserUseCase(userRepository)
+    const loginUserUseCase = new LoginUserUseCase(userRepository)
 
-    const user = await registerUserUseCase.execute(name, email, password)
+    const user = await loginUserUseCase.execute(email, password)
 
     const accessToken = await reply.jwtSign(
       { sub: user.getEmail(), role: user.getRole() },
@@ -39,17 +38,15 @@ export async function registerhandler(
     sendResponse({
       reply,
       success: true,
-      message: ['User registered successfully'],
-      status: 201,
-      data: {
-        accessToken,
-      },
+      message: ['Login successful'],
+      status: 200,
+      data: { accessToken },
     })
   } catch (error) {
     generalErrorResponse({
       reply,
       error,
-      logMessage: 'Error registering user',
+      logMessage: 'Error in loginHandler',
     })
   }
 }

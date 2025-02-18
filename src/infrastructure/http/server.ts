@@ -11,6 +11,8 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 
+import { loginRoutes } from '@/presentation/routes/auth/login.route'
+import { refreshTokenRoutes } from '@/presentation/routes/auth/refresh-token.route'
 import { registerUsersRoutes } from '@/presentation/routes/auth/register-users.route'
 import { env } from '@/shared/config/env'
 import { errorHandler } from '@/shared/pre-handlers/error-handler'
@@ -73,6 +75,8 @@ export function buildServer() {
 
   //auth routes
   app.register(registerUsersRoutes, { prefix: '/api/auth' })
+  app.register(loginRoutes, { prefix: '/api/auth' })
+  app.register(refreshTokenRoutes, { prefix: '/api/auth' })
 
   //return app
   return app

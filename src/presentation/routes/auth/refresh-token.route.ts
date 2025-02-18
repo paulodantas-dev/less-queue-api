@@ -2,13 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
-import { registerhandler } from '@/presentation/controllers/auth/register.controller'
-
-export const registerSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(6, 'Password must contain at least 6 characters'),
-})
+import { refreshTokenHandler } from '@/presentation/controllers/auth/refresh-token.controller'
 
 export const successSchema = z.object({
   success: z.boolean(),
@@ -20,19 +14,18 @@ export const successSchema = z.object({
     .nullable(),
 })
 
-export async function registerUsersRoutes(app: FastifyInstance) {
+export async function refreshTokenRoutes(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    '/register',
+    '/refresh-token',
     {
       schema: {
         tags: ['Auth'],
         summary: 'Create a new account',
-        body: registerSchema,
         response: {
-          201: successSchema.strict(),
+          200: successSchema,
         },
       },
     },
-    registerhandler,
+    refreshTokenHandler,
   )
 }
