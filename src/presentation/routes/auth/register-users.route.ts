@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
-import { registerhandler } from '@/presentation/controllers/auth/register.controller'
+import { registerHandler } from '@/presentation/controllers/auth/register.controller'
 
 export const registerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -10,7 +10,7 @@ export const registerSchema = z.object({
   password: z.string().min(6, 'Password must contain at least 6 characters'),
 })
 
-export const successSchema = z.object({
+const successSchema = z.object({
   success: z.boolean(),
   message: z.array(z.string()),
   data: z
@@ -20,7 +20,7 @@ export const successSchema = z.object({
     .nullable(),
 })
 
-export async function registerUsersRoutes(app: FastifyInstance) {
+export async function registerUsersRoute(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/register',
     {
@@ -33,6 +33,6 @@ export async function registerUsersRoutes(app: FastifyInstance) {
         },
       },
     },
-    registerhandler,
+    registerHandler,
   )
 }

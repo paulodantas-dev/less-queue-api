@@ -1,6 +1,7 @@
 import { jwtDecode } from 'jwt-decode'
 
 import type { UserRepository } from '@/domain/repositories/user-repository'
+import { NotFoundError } from '@/shared/pre-handlers/error-handler/types/not-found-error'
 import { UnauthorizedError } from '@/shared/pre-handlers/error-handler/types/unauthorized-error'
 
 export class RefreshTokenUseCase {
@@ -17,7 +18,7 @@ export class RefreshTokenUseCase {
 
       const user = await this.userRepository.findByEmail(userEmail)
       if (!user) {
-        throw new UnauthorizedError('User not found.')
+        throw new NotFoundError('User not found.')
       }
 
       return user

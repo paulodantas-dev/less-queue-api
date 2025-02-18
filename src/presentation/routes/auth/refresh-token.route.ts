@@ -4,7 +4,7 @@ import z from 'zod'
 
 import { refreshTokenHandler } from '@/presentation/controllers/auth/refresh-token.controller'
 
-export const successSchema = z.object({
+const successSchema = z.object({
   success: z.boolean(),
   message: z.array(z.string()),
   data: z
@@ -14,13 +14,13 @@ export const successSchema = z.object({
     .nullable(),
 })
 
-export async function refreshTokenRoutes(app: FastifyInstance) {
+export async function refreshTokenRoute(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/refresh-token',
     {
       schema: {
         tags: ['Auth'],
-        summary: 'Create a new account',
+        summary: 'Refresh access token',
         response: {
           200: successSchema,
         },

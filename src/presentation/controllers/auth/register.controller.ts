@@ -7,7 +7,7 @@ import { sendResponse } from '@/shared/utils/send-response'
 
 import { registerSchema } from '../../routes/auth/register-users.route'
 
-export async function registerhandler(
+export async function registerHandler(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {

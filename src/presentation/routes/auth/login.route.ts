@@ -9,7 +9,7 @@ export const loginSchema = z.object({
   password: z.string().min(6, 'Password must contain at least 6 characters'),
 })
 
-export const successSchema = z.object({
+const successSchema = z.object({
   success: z.boolean(),
   message: z.array(z.string()),
   data: z
@@ -19,7 +19,7 @@ export const successSchema = z.object({
     .nullable(),
 })
 
-export async function loginRoutes(app: FastifyInstance) {
+export async function loginRoute(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/login',
     {
